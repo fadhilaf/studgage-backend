@@ -4,8 +4,13 @@
   "description": "the backend side for studgage",
   "main": "src/index.js",
   "repository": "git@github.com:FadhilAF/studgage-backend.git",
-  "author": "fadhil-zidane",
+  "author": "fadhilaf",
   "private": true,
+  "scripts": {
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node --files' ./src/index.ts",
+    "start": "node ./dist/index.js",
+    "build": "tsc"
+  },
   "dependencies": {
     "bcrypt": "^5.0.1",
     "connect-mongodb-session": "^3.1.1",
@@ -14,7 +19,10 @@
     "express-session": "^1.17.3",
     "mongoose": "^6.5.4",
     "multer": "^1.4.5-lts.1",
-    "typescript": "^4.8.2"
+    "redis": "^4.3.1",
+    "socket.io": "^4.5.1",
+    "typescript": "^4.8.2",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -23,6 +31,7 @@
     "@types/express": "^4.17.13",
     "@types/express-session": "^1.17.5",
     "@types/node": "^18.7.14",
+    "@types/validator": "^13.7.6",
     "nodemon": "^2.0.19",
     "ts-node": "^10.9.1"
   }
