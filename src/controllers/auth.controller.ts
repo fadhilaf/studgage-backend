@@ -9,7 +9,7 @@ const signUp: RequestHandler = (req, res, next) => {
   student.save((err) => {
     if (err) return next(err);
 
-    return res.json({ message: "Account Successfully Made" });
+    return res.json({ message: "account Successfully Made" });
   });
 };
 
@@ -21,7 +21,7 @@ const login: RequestHandler = async (req, res, next) => {
 
     if (!student)
       return next(
-        new Error("Couldn't Find The Account With Username " + body.username)
+        new Error("couldn't find the account with username " + body.username)
       );
 
     student!.comparePassword(
@@ -32,10 +32,10 @@ const login: RequestHandler = async (req, res, next) => {
         if (isMatch) {
           req.session.userId = student!._id;
 
-          return res.json({ message: "Successfully Logged In" });
+          return res.json({ message: "successfully logged in" });
         }
 
-        return next(new Error("Wrong Password"));
+        return next(new Error("wrong password"));
       }
     );
   } catch (err) {
@@ -48,7 +48,7 @@ const logout: RequestHandler = (req, res, next) => {
     if (err) return next(err);
   });
 
-  return res.json({ message: "Successfully logged out" });
+  return res.json({ message: "successfully logged out" });
 };
 
 export default {

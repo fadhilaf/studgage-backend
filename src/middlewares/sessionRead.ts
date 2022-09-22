@@ -16,7 +16,7 @@ const sessionRead: RequestHandler = async (req, res, next) => {
     };
     
     if ((req.originalUrl === "/auth/login" || req.originalUrl === "/auth/signup") && (req.method === "POST"))
-      return next(new Error("You already have a session, logout before you need to login/signup again"));
+      return next(new Error("you already have a session, logout before you need to login/signup again"));
 
 
     next();

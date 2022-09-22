@@ -82,23 +82,21 @@ studentSchema.pre("save", function (next): void {
   //jadi dio buat hashed password, idak lgsg
   //dilanjut ke fungsi selanjutnyo bae ckitu
   if (!this.isModified("password")) next();
-  else {
-  }
+
   let student = this;
 
   bcrypt.genSalt(
     parseInt(process.env.SALT_WORK_FACTOR!, 10),
     function (err, salt) {
       if (err) return next(err);
-      else {
-        bcrypt.hash(student.password, salt, function (err, hash) {
-          if (err) return next(err);
-          else {
-            student.password = hash;
-            next();
-          }
-        });
-      }
+
+      bcrypt.hash(student.password, salt, function (err, hash) {
+        if (err) return next(err);
+        else {
+          student.password = hash;
+          next();
+        }
+      });
     }
   );
 });

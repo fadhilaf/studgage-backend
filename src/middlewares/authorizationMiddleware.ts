@@ -5,6 +5,6 @@ const authorizationMiddleware: RequestHandler = (req, res, next) => {
     return next();
   }
 
-  return next(new Error("You are not authenticated"))
+  return next(new Error("you are not authenticated"))
 }
 export default authorizationMiddleware;
