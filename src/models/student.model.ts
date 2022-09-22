@@ -1,9 +1,10 @@
 //Class Model utk nyiapin type schema methods ny
 //link: https://mongoosejs.com/docs/typescript/statics-and-methods.html
 import { Schema, Model, model } from "mongoose";
-
-import isEmail from "validator/lib/isEmail";
 import bcrypt from "bcrypt";
+
+import uniqueValidator from "mongoose-unique-validator";
+import isEmail from "validator/lib/isEmail";
 
 export interface IStudent {
   username: string;
@@ -54,16 +55,24 @@ const studentSchema = new Schema<IStudent, StudentModel>({
   email: {
     type: String,
     unique: true,
+    //mongoose Validation
     required: [true, "email required"],
     validate: {
       validator: isEmail,
-      message: "Please provide a valid email",
+      message: "please provide a valid email",
     },
   },
   password: {
     type: String,
     required: [true, "password required"],
   },
+});
+
+//kareno untuk ngecek "unique" itu harus dilakuken samo mongodbnyo langsung,
+//(dak biso si mongoose nyo bae) jadi pakek third party package untuk nge set
+//error message custom pas ado yg input dak unique "mongoose-unique-validator"
+studentSchema.plugin(uniqueValidator, {
+  message: '{PATH} "{VALUE}" already used',
 });
 
 //kalo namonyo "save" berarti dijalanin pas lagi save, pre berarti sebelum
@@ -74,7 +83,6 @@ studentSchema.pre("save", function (next): void {
   //dilanjut ke fungsi selanjutnyo bae ckitu
   if (!this.isModified("password")) next();
   else {
-
   }
   let student = this;
 
@@ -93,7 +101,6 @@ studentSchema.pre("save", function (next): void {
       }
     }
   );
-
 });
 
 studentSchema.method(

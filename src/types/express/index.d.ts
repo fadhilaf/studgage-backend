@@ -9,9 +9,10 @@ import { ObjectId } from "bson";
 declare global { //declare global biar typenyo apply ke tiap file
   declare namespace Express {
       interface Request {
-        student?: {
+        user?: {
           id: ObjectId;
           username: string;
+          picture: string;
         };
       }
   }

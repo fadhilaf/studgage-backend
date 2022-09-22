@@ -4,14 +4,15 @@ import Student from "../models/student.model";
 const sessionRead: RequestHandler = async (req, res, next) => {
 
   if (req.session?.userId) {
-    const studentId = req.session.userId;
-    const student = await Student.findById(studentId);
+    const userId = req.session.userId;
+    const user = await Student.findById(userId);
 
-    if (!student) next(new Error("Student Id in the session invalid"));
+    if (!user) next(new Error("Student Id in the session invalid"));
 
-    req.student = {
-      id: student!._id,
-      username: student!.username,
+    req.user = {
+      id: user!._id,
+      username: user!.username,
+      picture: user!.picture!,
     };
     
     if ((req.originalUrl === "/auth/login" || req.originalUrl === "/auth/signup") && (req.method === "POST"))
