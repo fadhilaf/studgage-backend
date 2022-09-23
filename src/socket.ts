@@ -1,16 +1,23 @@
 import { Server } from "socket.io";
 import { Server as HttpServer } from "http";
+import { ObjectId } from "bson";
 
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData,
-} from "./socketEvents/types";
+import { JwtPayload, verify } from "jsonwebtoken";
 
 import redisClient from "./utilities/redis";
 
 import Student from "./models/student.model";
+
+declare module "socket.io" {
+  interface Socket {
+    userId: ObjectId;
+  }
+}
+
+interface ClientToServerEvents {}
+interface ServerToClientEvents {}
+interface InterServerEvents {}
+interface SocketData {}
 
 function initializeSocket(server: HttpServer) {
   const io = new Server<
@@ -23,19 +30,30 @@ function initializeSocket(server: HttpServer) {
   });
 
   io.on("connection", (socket) => {
-    console.log("User " + socket.id + " Connected");
-    //neh ckmn ngambek data user nih
-    //kykny harus pake middleware, gud gud
-    redisClient.set("user", socket.id);
+    console.log("A User Connected To Socket");
   });
 
-  const privateChatIo = io.of("/private");
+  io.use((socket, next) => {
+    const auth = socket.handshake.auth as { token: string };
 
-  privateChatIo.on("connection", (socket) => {
-    console.log("User " + socket.id + " Connected to private chat namespace");
+    if (auth?.token) {
+      //bagian ini biso jadi apus galo
+      verify(auth!.token!, process.env.TOKEN_KEY!, function (err, decoded) {
+        if (err) {
+          console.log(err);
+          next(new Error("you have the wrong token"));
+        } else {
+          socket.userId = decoded!.id!;
+
+          console.log(decoded);
+          next();
+        }
+      });
+      //sampe sini apus
+    } else {
+      next(new Error("please provide token"));
+    }
   });
-
-  return io;
 }
 
 export default initializeSocket;
