@@ -3,6 +3,6 @@ import MongoDBSessionStore from "connect-mongodb-session";
 
 const SessionStore = MongoDBSessionStore(session);
 
-let mongodbUrl: string = process.env.DB_CONNECT || process.env.DEV_DB_CONNECT!;
+let mongodbUrl: string = process.env.DB_CONNECT || "mongodb://localhost:27017/studgage";
 
 export default new SessionStore({ uri: mongodbUrl, collection: "session" });

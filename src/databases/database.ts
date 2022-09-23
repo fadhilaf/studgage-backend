@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-let mongodbUrl: string = process.env.DB_CONNECT || process.env.DEV_DB_CONNECT!;
+let mongodbUrl: string = process.env.DB_CONNECT || "mongodb://localhost:27017/studgage";
 
 async function connectToDatabase() {
   mongoose.connect(
