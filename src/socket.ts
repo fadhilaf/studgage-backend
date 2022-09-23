@@ -1,16 +1,13 @@
 import { Server } from "socket.io";
 import { Server as HttpServer } from "http";
-import { ObjectId } from "bson";
 
-import { JwtPayload, verify } from "jsonwebtoken";
+import { verify, VerifyErrors } from "jsonwebtoken";
 
 import redisClient from "./utilities/redis";
 
-import Student from "./models/student.model";
-
 declare module "socket.io" {
   interface Socket {
-    userId: ObjectId;
+    userId?: string;
   }
 }
 
@@ -29,30 +26,38 @@ function initializeSocket(server: HttpServer) {
     cors: { origin: process.env.FRONTEND_URL || "*" },
   });
 
-  io.on("connection", (socket) => {
-    console.log("A User Connected To Socket");
-  });
-
   io.use((socket, next) => {
     const auth = socket.handshake.auth as { token: string };
 
     if (auth?.token) {
-      //bagian ini biso jadi apus galo
-      verify(auth!.token!, process.env.TOKEN_KEY!, function (err, decoded) {
-        if (err) {
-          console.log(err);
-          next(new Error("you have the wrong token"));
-        } else {
-          socket.userId = decoded!.id!;
-
-          console.log(decoded);
-          next();
-        }
-      });
-      //sampe sini apus
+      try {
+        const user = verify(auth!.token!, process.env.TOKEN_KEY!) as {
+          id: string;
+          exp: number;
+          iat: number;
+        };
+        socket.userId = user.id;
+        return next();
+      } catch (err) {
+        return next(err as VerifyErrors);
+      }
     } else {
       next(new Error("please provide token"));
     }
+  });
+
+  io.on("connection", (socket) => {
+    redisClient.set(socket.userId!, socket.id).then(() => {
+      console.log("User " + socket.userId + " Connected To Socket");
+    });
+    
+    socket.on("disconnect", () => {
+      redisClient.del(socket.userId!).then(() => {
+
+        console.log("User " + socket.userId + " Disconnected To Socket");
+        socket.userId = undefined;
+      });
+    });
   });
 }
 
