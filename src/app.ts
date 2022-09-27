@@ -20,21 +20,24 @@ app.set("trust proxy", 1);
 app.use(
   cors({
     credentials: true,
-    origin: process.env.FRONTEND_APP_URL || "http://127.0.0.1:5173",
+    origin: process.env.FRONTEND_APP_URL || ["http://localhost:5173", "http://192.168.100.85:5173"],
   })
 );
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true, limit: "100mb" }));
 
+//kalo mau kirim cookies trus diterima di frontned,
+//harus pake domain name yang sama. contohnya localhost
+//kalo dak gitu (cuma pake ip bae) bakal di ignore oleh browser T-T
 app.use(
   session({
     secret: process.env.SESSION_SECRET!,
     proxy: true,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // must be 'none' to enable cross-site delivery
-      secure: process.env.NODE_ENV === "production", // must be true if sameSite='none'
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
     },
     store: sessionStore,
     resave: true,
@@ -42,11 +45,13 @@ app.use(
   })
 );
 
-app.use(sessionReadMiddleware);
-
 app.use("/auth", AuthRouter);
 
+app.use(sessionReadMiddleware);
+
 app.use(authorizationMiddleware);
+
+app.use("/assets", express.static("./assets"));
 
 app.use("/user", UserRouter);
 app.use("/chat", ChatRouter);

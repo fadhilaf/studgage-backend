@@ -20,7 +20,7 @@ declare module "http" {
   }
 }
 
-const port = process.env.PORT || "3000";
+const port = process.env.PORT || 3000;
 
 const server = createServer(app);
 
@@ -35,7 +35,7 @@ db.connectToDatabase()
       .then(() => {
         console.log("Connected To Redis");
 
-        server.listen(port, () => {
+        server.listen(port as number, process.env.NODE_ENV === "testing"? "0.0.0.0" : "localhost", () => {
           console.log("Server Running On Port " + port);
         });
       })
