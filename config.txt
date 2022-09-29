@@ -1,0 +1,6 @@
+nodemon.json diset utk ngatur command yang dijalanin nodemon {
+    watch utk ngelist file ap be yg harus di liat nodemon kalo beganti harus restart,
+    execMap {
+        "{extensionFile}" ngatur ngejalanin command apo kalo yg dikasih file dgn extensionFile itu
+      }
+  }
