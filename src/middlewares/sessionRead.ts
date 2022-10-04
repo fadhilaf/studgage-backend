@@ -7,7 +7,7 @@ const sessionRead: RequestHandler = async (req, res, next) => {
     const userId = req.session.userId;
     const user = await Student.findById(userId);
 
-    if (!user) next(new Error("Student Id in the session invalid"));
+    if (!user) return next(new Error("Student Id in the session invalid"));
 
     req.user = {
       id: user!._id,
@@ -18,11 +18,10 @@ const sessionRead: RequestHandler = async (req, res, next) => {
     if ((req.originalUrl === "/auth/login" || req.originalUrl === "/auth/signup") && (req.method === "POST"))
       return next(new Error("you already have a session, logout before you need to login/signup again"));
 
-
-    next();
+    return next();
   }
 
-  next();
+  return next();
 
 };
 

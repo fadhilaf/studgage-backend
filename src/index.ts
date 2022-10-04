@@ -28,7 +28,7 @@ initializeSocket(server);
 
 db.connectToDatabase()
   .then(() => {
-    console.log("Connected To Database");
+    console.log("Connected To Database")
 
     redisClient
       .connect()
