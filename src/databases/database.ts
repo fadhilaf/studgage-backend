@@ -8,7 +8,7 @@ async function connectToDatabase() {
   try {
     response = await mongoose.connect(mongodbUrl);
   } catch (err: unknown) {
-    return err;
+    throw err;
   }
 
   return response;

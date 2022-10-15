@@ -18,8 +18,8 @@ const signUp = (req, res, next) => {
     const student = new student_model_1.default(body);
     student.save((err) => {
         if (err)
-            next(err);
-        res.json({ message: "Account Successfully Made" });
+            return next(err);
+        return res.json({ message: "account Successfully Made" });
     });
 };
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,23 +27,30 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const student = yield student_model_1.default.findOne({ username: body.username });
         if (!student)
-            next(new Error("Couldn't Find The Account With Username " + body.username));
-        student === null || student === void 0 ? void 0 : student.comparePassword(student.password, (err, isMatch) => {
+            return next(new Error("couldn't find the account with username " + body.username));
+        student.comparePassword(body.password, (err, isMatch) => {
             if (err)
-                next(err);
+                return next(err);
             if (isMatch) {
-                res.json({ message: "Successfully Logged In" });
+                req.session.userId = student._id;
+                return res.json({ message: "successfully logged in" });
             }
-            else {
-                next(new Error("Wrong Password"));
-            }
+            return next(new Error("wrong password"));
         });
     }
     catch (err) {
-        next(err);
+        return next(err);
     }
 });
+const logout = (req, res, next) => {
+    req.session.destroy((err) => {
+        if (err)
+            return next(err);
+    });
+    return res.json({ message: "successfully logged out" });
+};
 exports.default = {
     signUp,
     login,
+    logout,
 };

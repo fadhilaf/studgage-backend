@@ -13,20 +13,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-let mongodbUrl = process.env.DB_CONNECT || process.env.DEV_DB_CONNECT;
+let mongodbUrl = process.env.DB_CONNECT || "mongodb://localhost:27017/studgage";
 function connectToDatabase() {
     return __awaiter(this, void 0, void 0, function* () {
-        mongoose_1.default.connect(mongodbUrl, (err) => {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                console.log("Database connected");
-            }
-        });
+        let response;
+        try {
+            response = yield mongoose_1.default.connect(mongodbUrl);
+        }
+        catch (err) {
+            throw err;
+        }
+        return response;
     });
 }
-;
 exports.default = {
-    connectToDatabase
+    connectToDatabase,
 };

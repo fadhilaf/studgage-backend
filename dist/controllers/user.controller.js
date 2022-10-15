@@ -13,22 +13,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const student_model_1 = __importDefault(require("../models/student.model"));
-const sessionRead = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    if ((_a = req.session) === null || _a === void 0 ? void 0 : _a.userId) {
-        const userId = req.session.userId;
-        const user = yield student_model_1.default.findById(userId);
-        if (!user)
-            return next(new Error("Student Id in the session invalid"));
-        req.user = {
-            id: user._id,
-            username: user.username,
-            picture: user.picture,
-        };
-        if ((req.originalUrl === "/auth/login" || req.originalUrl === "/auth/signup") && (req.method === "POST"))
-            return next(new Error("you already have a session, logout before you need to login/signup again"));
-        return next();
+const getAuthenticatedData = (req, res, next) => {
+    return res.json({ data: req.user });
+};
+const getOthersData = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    let data;
+    try {
+        data = yield student_model_1.default.findById(req.params.id);
     }
-    return next();
+    catch (err) {
+        return next(err);
+    }
+    if (!data) {
+        return next(new Error("user id didnt exist"));
+    }
+    else {
+        return res.json({
+            data: { id: data._id, username: data.username, profile: data === null || data === void 0 ? void 0 : data.picture },
+        });
+    }
 });
-exports.default = sessionRead;
+exports.default = {
+    getAuthenticatedData,
+    getOthersData,
+};

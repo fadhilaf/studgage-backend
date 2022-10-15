@@ -6,5 +6,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_session_1 = __importDefault(require("express-session"));
 const connect_mongodb_session_1 = __importDefault(require("connect-mongodb-session"));
 const SessionStore = (0, connect_mongodb_session_1.default)(express_session_1.default);
-let mongodbUrl = process.env.DB_CONNECT || process.env.DEV_DB_CONNECT;
+let mongodbUrl = process.env.DB_CONNECT || "mongodb://localhost:27017/studgage";
 exports.default = new SessionStore({ uri: mongodbUrl, collection: "session" });
